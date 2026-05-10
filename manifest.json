@@ -1,0 +1,12 @@
+{
+  "display_name": "Tool MCP",
+  "loading_order": 20,
+  "requires": [],
+  "optional": [],
+  "js": "index.js",
+  "css": "style.css",
+  "author": "Nialyn Mid",
+  "version": "0.0.1",
+  "description": "Exposes SillyTavern tools via the Model Context Protocol (MCP) for stateful inter-extension communication.",
+  "homePage": "https://github.com/nialyn-mid/st-tool-mcp"
+}
