@@ -8,7 +8,7 @@ A SillyTavern extension that exposes extensions' registered agentic tools via th
 
 **MCP Tool Hub is NOT accessible to external programs!**
 
-> You may be wondering, "So, since extensions can already access eachothers' tools, what changes?" And the answer is... Not much, really. It's just a difference in protocol and more fragile layers of things to break when ST updates. This is more in case you have an extension that already accesses tools via MCP and dont want to access the tools directly.
+> You may be wondering, "So, since extensions can already access eachothers' tools, what changes?" And the answer is... Not much, really. It's just a difference in protocol and more fragile layers of things to break when ST updates. This is more in case you have an extension that already accesses other tools via MCP and dont want to access the tools directly.
 
 ## Features
 
