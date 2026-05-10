@@ -1,0 +1,26 @@
+/* MCP Tool Hub Styles */
+
+.mcp-hub-settings-container {
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#mcp-hub-settings .setup-item {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-bottom: 10px;
+}
+
+#mcp-hub-settings .setup-item b {
+    color: var(--grey40);
+    text-transform: uppercase;
+    font-size: 0.8em;
+    letter-spacing: 0.5px;
+}
+
+#mcp-hub-settings .text_pole {
+    width: 100%;
+}
