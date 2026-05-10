@@ -17,6 +17,16 @@ A SillyTavern extension that exposes extensions' registered agentic tools via th
 
 ## Installation
 
+### Via SillyTavern Extension Installer (Recommended)
+
+1. Open SillyTavern.
+2. Go to **Extensions** (puzzle icon) → **Install Extension**.
+3. Paste this repository URL: `https://github.com/nialyn-mid/st-tool-mcp`
+4. Click **Install**.
+5. Refresh the page.
+
+### Manual Installation
+
 1. Download the latest release from the [Releases page](https://github.com/nialyn-mid/st-tool-mcp/releases).
 2. Extract the zip file into your `extensions` folder (e.g., `SillyTavern/public/scripts/extensions/third-party/st-tool-mcp`).
 3. Restart SillyTavern.
