@@ -1,3 +1,5 @@
+import { logger } from './logger.js';
+
 /**
  * A minimal MCP Server implementation for SillyTavern.
  * Handles JSON-RPC 2.0 requests for tool listing and execution.
@@ -21,6 +23,7 @@ export class McpServer {
         this.transport = transport;
         this.transport.onmessage = (message) => this.handleMessage(message);
         await this.transport.start();
+        logger.debug('Server connected to transport.');
     }
 
     /**
@@ -31,6 +34,7 @@ export class McpServer {
         if (message.jsonrpc !== '2.0') return;
 
         const { method, params, id } = message;
+        logger.debug(`Received request: ${method} (id: ${id})`, params);
 
         try {
             let result;
@@ -56,12 +60,14 @@ export class McpServer {
                     result = callResult;
                     break;
                 case 'notifications/initialized':
+                    logger.info('MCP Client initialized connection.');
                     return; // Ignore
                 default:
                     throw new Error(`Method not found: ${method}`);
             }
 
             if (id !== undefined) {
+                logger.debug(`Sending response (id: ${id})`, result);
                 await this.transport.send({
                     jsonrpc: '2.0',
                     id,
@@ -69,6 +75,7 @@ export class McpServer {
                 });
             }
         } catch (error) {
+            logger.error(`Error handling request (id: ${id}):`, error);
             if (id !== undefined) {
                 await this.transport.send({
                     jsonrpc: '2.0',

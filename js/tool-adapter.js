@@ -1,3 +1,5 @@
+import { logger } from './logger.js';
+
 /**
  * Bridges SillyTavern's ToolManager to MCP Tool format.
  */
@@ -22,6 +24,7 @@ export class ToolAdapter {
      */
     async getMcpTools() {
         const stTools = this.toolManager?.tools || [];
+        logger.debug(`Found ${stTools.length} tools in ST ToolManager.`);
         return stTools.map(tool => ({
             name: tool.name,
             description: tool.description,
@@ -37,12 +40,15 @@ export class ToolAdapter {
      */
     async callTool(name, args) {
         if (!this.toolManager) {
+            logger.error('ST ToolManager not found during callTool.');
             throw new Error('ST ToolManager not found');
         }
 
         try {
+            logger.info(`Invoking ST tool: ${name}`, args);
             // SillyTavern's invokeFunctionTool returns a string or a Promise of a string
             const result = await this.toolManager.invokeFunctionTool(name, args);
+            logger.debug(`Tool ${name} returned:`, result);
             return {
                 content: [
                     {
@@ -52,6 +58,7 @@ export class ToolAdapter {
                 ]
             };
         } catch (error) {
+            logger.error(`Error invoking tool ${name}:`, error);
             return {
                 isError: true,
                 content: [

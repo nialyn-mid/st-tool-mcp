@@ -1,5 +1,5 @@
 /**
- * SillyTavern MCP Hub - Verification Script
+ * MCP Tool Hub - Verification Script
  * Paste this into the browser console to test the MCP connection.
  */
 
@@ -22,7 +22,7 @@
             return new Promise((resolve, reject) => {
                 const id = nextId++;
                 const timeout = setTimeout(() => reject(new Error(`Request ${id} timed out`)), 5000);
-                
+
                 const originalOnMessage = transport.onmessage;
                 transport.onmessage = (message) => {
                     if (message.id === id) {

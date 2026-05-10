@@ -1,3 +1,5 @@
+import { logger } from './logger.js';
+
 /**
  * A simple in-memory transport for MCP communication within the same browser tab.
  */
@@ -24,6 +26,7 @@ export class InMemoryTransport {
 
     async send(message) {
         if (!this.otherSide) {
+            logger.error('Attempted to send message over unconnected transport.');
             throw new Error('Transport not connected');
         }
         
@@ -36,6 +39,7 @@ export class InMemoryTransport {
     }
 
     async close() {
+        logger.debug('Closing transport.');
         if (this.onclose) this.onclose();
         if (this.otherSide && this.otherSide.onclose) {
             this.otherSide.onclose();
