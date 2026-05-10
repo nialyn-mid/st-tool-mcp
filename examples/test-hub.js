@@ -4,16 +4,16 @@
  */
 
 (async () => {
-    console.log('%c[MCP Tester] Starting verification...', 'color: cyan; font-weight: bold;');
+    console.log('%c[MCP Access] Starting verification...', 'color: cyan; font-weight: bold;');
 
     try {
         // 1. Import the Hub
         const hubPath = '/scripts/extensions/third-party/st-tool-mcp/index.js';
-        console.log(`[MCP Tester] Importing Hub from ${hubPath}...`);
+        console.log(`[MCP Access] Importing Hub from ${hubPath}...`);
         const hub = await import(hubPath);
 
         // 2. Create a transport
-        console.log('[MCP Tester] Creating transport...');
+        console.log('[MCP Access] Creating transport...');
         const transport = await hub.createLocalTransport();
 
         // 3. Define a simple helper to send JSON-RPC requests
@@ -43,22 +43,22 @@
         };
 
         // 4. Initialize
-        console.log('[MCP Tester] Initializing session...');
+        console.log('[MCP Access] Initializing session...');
         const initResult = await sendRequest('initialize', {});
-        console.log('[MCP Tester] Server Info:', initResult.serverInfo);
+        console.log('[MCP Access] Server Info:', initResult.serverInfo);
 
         // 5. List Tools
-        console.log('[MCP Tester] Listing tools...');
+        console.log('[MCP Access] Listing tools...');
         const toolsResult = await sendRequest('tools/list', {});
-        console.log(`[MCP Tester] Found ${toolsResult.tools.length} tools:`, toolsResult.tools.map(t => t.name));
+        console.log(`[MCP Access] Found ${toolsResult.tools.length} tools:`, toolsResult.tools.map(t => t.name));
 
         if (toolsResult.tools.length > 0) {
-            console.log('%c[MCP Tester] SUCCESS: Tools retrieved via MCP!', 'color: green; font-weight: bold;');
+            console.log('%c[MCP Access] SUCCESS: Tools retrieved via MCP!', 'color: green; font-weight: bold;');
         } else {
-            console.log('%c[MCP Tester] WARNING: Connection successful, but no tools found in ST.', 'color: orange; font-weight: bold;');
+            console.log('%c[MCP Access] WARNING: Connection successful, but no tools found in ST.', 'color: orange; font-weight: bold;');
         }
 
     } catch (error) {
-        console.error('%c[MCP Tester] FAILED:', 'color: red; font-weight: bold;', error);
+        console.error('%c[MCP Access] FAILED:', 'color: red; font-weight: bold;', error);
     }
 })();

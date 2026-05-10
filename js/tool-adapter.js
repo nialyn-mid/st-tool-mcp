@@ -25,11 +25,16 @@ export class ToolAdapter {
     async getMcpTools() {
         const stTools = this.toolManager?.tools || [];
         logger.debug(`Found ${stTools.length} tools in ST ToolManager.`);
-        return stTools.map(tool => ({
-            name: tool.name,
-            description: tool.description,
-            inputSchema: tool.parameters || { type: 'object', properties: {} }
-        }));
+        return stTools.map(tool => {
+            // SillyTavern's ToolDefinition uses private fields for name, description, and parameters.
+            // We use toFunctionOpenAI() to get a public representation.
+            const func = tool.toFunctionOpenAI()?.function || {};
+            return {
+                name: func.name || 'unknown',
+                description: func.description || '',
+                inputSchema: func.parameters || { type: 'object', properties: {} }
+            };
+        });
     }
 
     /**
@@ -46,8 +51,22 @@ export class ToolAdapter {
 
         try {
             logger.info(`Invoking ST tool: ${name}`, args);
-            // SillyTavern's invokeFunctionTool returns a string or a Promise of a string
+            // SillyTavern's invokeFunctionTool returns a string or an Error object
             const result = await this.toolManager.invokeFunctionTool(name, args);
+            
+            if (result instanceof Error) {
+                logger.error(`ST tool ${name} returned an error:`, result);
+                return {
+                    isError: true,
+                    content: [
+                        {
+                            type: 'text',
+                            text: `Tool execution failed: ${result.message}`
+                        }
+                    ]
+                };
+            }
+
             logger.debug(`Tool ${name} returned:`, result);
             return {
                 content: [
@@ -58,13 +77,13 @@ export class ToolAdapter {
                 ]
             };
         } catch (error) {
-            logger.error(`Error invoking tool ${name}:`, error);
+            logger.error(`Exception during tool ${name} invocation:`, error);
             return {
                 isError: true,
                 content: [
                     {
                         type: 'text',
-                        text: `Error invoking tool ${name}: ${error.message}`
+                        text: `Internal Hub Error: ${error.message}`
                     }
                 ]
             };
