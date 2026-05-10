@@ -25,14 +25,27 @@ export class ToolAdapter {
     async getMcpTools() {
         const stTools = this.toolManager?.tools || [];
         logger.debug(`Found ${stTools.length} tools in ST ToolManager.`);
+        
         return stTools.map(tool => {
             // SillyTavern's ToolDefinition uses private fields for name, description, and parameters.
             // We use toFunctionOpenAI() to get a public representation.
-            const func = tool.toFunctionOpenAI()?.function || {};
+            const funcDef = tool.toFunctionOpenAI()?.function || {};
+            const name = funcDef.name || 'unknown';
+            const parameters = funcDef.parameters;
+
+            // Schema Validation Warnings
+            if (!parameters || Object.keys(parameters).length === 0) {
+                logger.warn(`Tool "${name}" has no parameter schema defined. The LLM will call it with no arguments.`);
+            } else if (parameters.type === 'object' && (!parameters.properties || Object.keys(parameters.properties).length === 0)) {
+                logger.warn(`Tool "${name}" has an empty "properties" object in its schema. The LLM will likely omit arguments.`);
+            } else if (parameters.type === 'object' && (!parameters.required || parameters.required.length === 0)) {
+                logger.warn(`Tool "${name}" defines properties but has no "required" fields. Models may call this with no arguments first.`);
+            }
+
             return {
-                name: func.name || 'unknown',
-                description: func.description || '',
-                inputSchema: func.parameters || { type: 'object', properties: {} }
+                name: name,
+                description: funcDef.description || '',
+                inputSchema: parameters || { type: 'object', properties: {} }
             };
         });
     }
@@ -51,6 +64,14 @@ export class ToolAdapter {
 
         try {
             logger.info(`Invoking ST tool: ${name}`, args);
+            
+            // Runtime Warning for empty arguments
+            const toolDef = this.toolManager?.tools.find(t => t.toFunctionOpenAI()?.function?.name === name);
+            const schema = toolDef?.toFunctionOpenAI()?.function?.parameters;
+            if (schema?.properties && Object.keys(schema.properties).length > 0 && (!args || Object.keys(args).length === 0)) {
+                logger.warn(`Tool "${name}" was called with empty arguments, but its schema defines required properties. This usually indicates an LLM hallucination or a Client-side formatting error.`);
+            }
+
             // SillyTavern's invokeFunctionTool returns a string or an Error object
             const result = await this.toolManager.invokeFunctionTool(name, args);
             
