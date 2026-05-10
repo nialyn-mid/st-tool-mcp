@@ -12,7 +12,7 @@ A SillyTavern extension that exposes extensions' registered agentic tools via th
 
 ## Features
 
-- **MCP Server:** Implements the MCP specification to allow other extensions to discover and use internal SillyTavern tools.
+- **MCP Server:** Implements the MCP specification to allow other extensions to discover and use registered SillyTavern tools.
 - **Tool Adapter:** Bridges the generic MCP tool interface to SillyTavern's specific tool execution environment.
 
 ## Installation
